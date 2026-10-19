@@ -1,0 +1,28 @@
+### Laboratorios cadastrados
+GET http://localhost:8080/api/labs
+
+### Horarios livres do Laboratorio de Robotica em uma data
+GET http://localhost:8080/api/labs/2/availability?date=2026-11-20
+
+### Reservar
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+
+{
+  "laboratoryId": 2,
+  "requesterName": "Kauan Marques",
+  "requesterEmail": "kauan@example.com",
+  "purpose": "Testes do robo de sumo",
+  "attendees": 6,
+  "startsAt": "2026-11-20T14:00",
+  "endsAt": "2026-11-20T16:00"
+}
+
+### Minhas reservas
+GET http://localhost:8080/api/reservations?email=kauan@example.com
+
+### Cancelar (somente quem reservou)
+POST http://localhost:8080/api/reservations/1/cancel
+Content-Type: application/json
+
+{ "requesterEmail": "kauan@example.com" }

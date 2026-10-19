@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: reservas
+          POSTGRES_USER: reservas
+          POSTGRES_PASSWORD: reservas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U reservas -d reservas"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Testes contra PostgreSQL real
+        run: ./mvnw -B verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/reservas
+          SPRING_DATASOURCE_USERNAME: reservas
+          SPRING_DATASOURCE_PASSWORD: reservas
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build da imagem
+        run: docker build -t reserva-labs .
